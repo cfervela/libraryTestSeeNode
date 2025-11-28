@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 // CORS Configuration - IMPORTANT!
 const corsOptions = {
     origin: [
-        'https://YOUR-USERNAME.github.io',  // ← UPDATE THIS with your GitHub Pages URL
+        'https://cfervela.github.io',  // ← UPDATE THIS with your GitHub Pages URL
         'http://localhost:5500',            // For local development
         'http://127.0.0.1:5500'
     ],
