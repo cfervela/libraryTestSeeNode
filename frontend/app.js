@@ -1,5 +1,6 @@
 // URL base de la API - Ajusta el puerto si es necesario
-const API_BASE_URL = 'http://localhost:3000/api/books';
+const API = process.env.BACKEND_API;
+const API_BASE_URL = `${API}/books`;
 
 // Función para mostrar/ocultar secciones
 function mostrarSeccion(seccion) {
