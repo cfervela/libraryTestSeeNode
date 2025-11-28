@@ -6,18 +6,28 @@ const pool = require('./db/conexion');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// CORS Configuration - CORREGIDO
+// Opción 2: CORS específico pero correcto
+const allowedOrigins = [
+    'https://cfervela.github.io',
+    'http://localhost:5500',
+    'http://127.0.0.1:5500'
+];
+
 const corsOptions = {
-    origin: [
-        'https://cfervela.github.io',              // ✅ Sin ruta ni barra final
-        'http://localhost:5500',                    // Para desarrollo local
-        'http://127.0.0.1:5500',
-        'http://localhost:5501',                    // Por si cambias puerto
-        'http://127.0.0.1:5501'
-    ],
-    credentials: true,
+    origin: function (origin, callback) {
+        // Permitir requests sin origin (como Postman, curl, apps móviles)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            console.log('❌ Origen bloqueado por CORS:', origin);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
     optionsSuccessStatus: 200
 };
 
