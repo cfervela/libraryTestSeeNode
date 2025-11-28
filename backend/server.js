@@ -2,31 +2,46 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const booksRoutes = require('./routes/booksRoutes');
-const pool = require('./db/conexion'); // <-- Importamos la conexión
+const pool = require('./db/conexion');
 const app = express();
 const PORT = process.env.PORT || 3000;
-app.use(cors());
+
+// CORS Configuration - IMPORTANT!
+const corsOptions = {
+    origin: [
+        'https://YOUR-USERNAME.github.io',  // ← UPDATE THIS with your GitHub Pages URL
+        'http://localhost:5500',            // For local development
+        'http://127.0.0.1:5500'
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
+
 // Ruta base
 app.get('/', (req, res) => {
-res.send('Hola Fer Vela!! API BookLibrary funcionando correctamente');
+    res.send('Hola Fer Vela!! API BookLibrary funcionando correctamente');
 });
+
 // Rutas principales
 app.use('/api/books', booksRoutes);
-// Funcion que hace una consulta de prueba mínima que
-// confirma que todo el circuito conexión → consulta → respuesta está funcionando
-async function testConnection() {
-try {
-const [rows] = await pool.query('SELECT 1 + 1 AS result'); //Le pide a MySQL que sume 1 + 1, y le ponga el alias result al valor
 
-console.log('Hola Fer Vela!! Conexión a la base de datos establecida. Resultado:', rows[0].result);
-} catch (error) {
-console.error(' Error al conectar con la base de datos:', error.message);
+// Funcion que hace una consulta de prueba mínima
+async function testConnection() {
+    try {
+        const [rows] = await pool.query('SELECT 1 + 1 AS result');
+        console.log('Hola Fer Vela!! Conexión a la base de datos establecida. Resultado:', rows[0].result);
+    } catch (error) {
+        console.error('Error al conectar con la base de datos:', error.message);
+    }
 }
-}
+
 // Iniciar servidor y probar conexión
 app.listen(PORT, async () => {
-console.log(`Servidor escuchando en http://localhost:${PORT}`);
-await testConnection(); // <--------------------- se ejecuta al arrancar el servidor
+    console.log(`Servidor escuchando en http://localhost:${PORT}`);
+    await testConnection();
 });
 

@@ -1,5 +1,5 @@
 // URL base de la API - Ajusta el puerto si es necesario
-const API = process.env.BACKEND_API;
+const API = 'https://web-czz1pkxtkrle.up-de-fra1-k8s-1.apps.run-on-seenode.com/api';
 const API_BASE_URL = `${API}/books`;
 
 // Función para mostrar/ocultar secciones
