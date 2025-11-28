@@ -275,28 +275,42 @@ document.getElementById('formCambio').addEventListener('submit', async (e) => {
 // ========== CONSULTA (READ) ==========
 
 // Consultar todos los libros
+// Mejora la función consultarTodos()
 async function consultarTodos() {
     const resultadoDiv = document.getElementById('resultadoConsulta');
     resultadoDiv.innerHTML = '<div class="loading">⏳ Cargando libros...</div>';
-    
+
     try {
-        const response = await fetch(`${API_BASE_URL}/`);
-        
+        console.log('🔍 Consultando:', API_BASE_URL + '/');
+
+        const response = await fetch(`${API_BASE_URL}/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        console.log('📡 Response status:', response.status);
+        console.log('📡 Response headers:', response.headers);
+
         if (!response.ok) {
-            throw new Error('Error al obtener los libros');
+            const errorText = await response.text();
+            console.error('❌ Error response:', errorText);
+            throw new Error(`HTTP ${response.status}: ${errorText}`);
         }
-        
+
         const books = await response.json();
-        
+        console.log('📚 Libros recibidos:', books);
+
         if (books.length === 0) {
             resultadoDiv.innerHTML = '<div class="sin-resultados">📭 No hay libros registrados</div>';
             return;
         }
-        
+
         let html = '<table class="tabla-libros">';
         html += '<thead><tr><th>ID</th><th>Título</th><th>Autor</th></tr></thead>';
         html += '<tbody>';
-        
+
         books.forEach(book => {
             html += `
                 <tr>
@@ -306,13 +320,19 @@ async function consultarTodos() {
                 </tr>
             `;
         });
-        
+
         html += '</tbody></table>';
         resultadoDiv.innerHTML = html;
-        
+
     } catch (error) {
-        console.error('Error:', error);
-        resultadoDiv.innerHTML = '<div class="mensaje error">❌ Error al consultar los libros. Verifique que el servidor esté ejecutándose.</div>';
+        console.error('❌ Error completo:', error);
+        resultadoDiv.innerHTML = `
+            <div class="mensaje error">
+                ❌ Error al consultar los libros.<br>
+                <small>Error: ${error.message}</small><br>
+                <small>Verifica la consola del navegador (F12) para más detalles.</small>
+            </div>
+        `;
     }
 }
 // Consultar un libro por ID
